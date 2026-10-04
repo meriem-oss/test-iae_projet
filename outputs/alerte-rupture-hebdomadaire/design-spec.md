@@ -2,7 +2,7 @@
 workflow: alerte-rupture-hebdomadaire
 requirements_file: outputs/alerte-rupture-hebdomadaire/requirements.md
 spec_version: 3.0
-approved: false
+approved: true
 definition_type: Step-Driven
 mechanism: Skill
 involvement: Augmented
@@ -18,7 +18,7 @@ counts:
 
 # Alerte Rupture Hebdomadaire — Design Spec
 
-> **Version rapide (test).** Spécification rédigée sans interview, avec des choix par défaut raisonnables. Les points marqués *(à vérifier)* sont à confirmer avec l'étudiante ou l'enseignante avant l'approbation.
+> **Version rapide (test), approuvée le 2026-10-04.** Spécification rédigée sans interview. À la demande de l'étudiante, les questions ouvertes ont été tranchées par défaut (voir Constraint Conformance et Deployment Plan). Les points marqués *(à vérifier)* restent à confirmer avec une vraie enseigne.
 
 ## Source
 
@@ -89,8 +89,8 @@ Le workflow est **Deterministic** dans son ensemble : les mêmes calculs, les m�
 | Constraint | From | Met by | State |
 |---|---|---|---|
 | Le workflow ne reçoit que des ventes agrégées par référence et par lieu ; aucun export contenant des données clients | Boundaries · Self (principe RGPD) | Step 2 (`screening-sales-data`) arrête le workflow et nomme seulement l'en-tête de la colonne identifiante (G2, R3) | Satisfied |
-| Aucune donnée réelle de l'enseigne dans un dépôt public ; données fictives ou anonymisées pour le projet de cours | Boundaries · `data/README.md` | — dépend de la visibilité du dépôt GitHub *(à vérifier : dépôt privé ou public ?)* | Open |
-| La liste d'alerte et les fichiers intermédiaires sont réservés au responsable des achats, aux directeurs de magasin, au responsable e-commerce et à la direction | Access · Self | — dépend des droits d'accès au dépôt *(à vérifier)* | Open |
+| Aucune donnée réelle de l'enseigne dans un dépôt public ; données fictives ou anonymisées pour le projet de cours | Boundaries · `data/README.md` | Le dépôt est traité comme public quelle que soit sa visibilité : seules des données fictives sont utilisées (exemples E2 à E5, E1 rempli avec des données fictives) | Satisfied |
+| La liste d'alerte et les fichiers intermédiaires sont réservés au responsable des achats, aux directeurs de magasin, au responsable e-commerce et à la direction | Access · Self | — Accès = accès au dépôt GitHub. Owner : Meriem. Raison : projet de cours sur données fictives ; à revoir avant tout usage sur données réelles | Accepted |
 | Ne jamais contacter un fournisseur | Prohibited actions · Self | Aucune intégration de messagerie ; S1 l'interdit explicitement | Satisfied |
 | Ne jamais passer, modifier ou annuler une commande | Prohibited actions · Self | Aucune intégration vers un logiciel de commande ; S1 s'arrête à G1 | Satisfied |
 | Ne jamais modifier les fichiers sources (C1 à C4, C6) | Prohibited actions · Self | S1 lit `data/` et écrit uniquement dans `outputs/alerte-rupture-hebdomadaire/` | Satisfied |
@@ -254,14 +254,14 @@ pauses G1/G2 et décision de l'utilisateur ; actions sur fichiers
 2. Le skill `screening-sales-data` est disponible dans la session (skills du compte).
 3. `data/delais-fournisseurs.csv` (C4) et `data/calendrier-commandes.csv` (C6) existent.
 4. Les exports C1, C2 et C3 de la semaine sont déposés dans `data/`, agrégés et sans donnée client. Pour le projet de cours, utiliser uniquement des données fictives.
-5. *(à vérifier)* Accord de l'enseignante pour ajouter de nouveaux skills dans `.claude/skills/`. Le `CLAUDE.md` du projet demande de ne pas modifier les skills du cours. Sinon, les ranger dans `outputs/alerte-rupture-hebdomadaire/skill/`.
+5. Les nouveaux skills sont rangés dans `outputs/alerte-rupture-hebdomadaire/skill/`, car le `CLAUDE.md` du projet demande de ne pas modifier `.claude/skills/`. Pour les lancer par leur nom, l'enseignante pourra les copier dans `.claude/skills/` si elle le souhaite.
 
 ## Deployment Plan
 
 | Artifact | Target Location | Deployment Steps |
 |---|---|---|
-| S1 — `alerte-rupture-hebdomadaire` | `.claude/skills/alerte-rupture-hebdomadaire/SKILL.md` *(ou `outputs/alerte-rupture-hebdomadaire/skill/alerte-rupture-hebdomadaire/` si l'ajout dans `.claude/skills/` n'est pas autorisé)* | Build écrit le SKILL.md (`disable-model-invocation: true`), commit ; lancement par `/alerte-rupture-hebdomadaire` dans une nouvelle session |
-| S2 — `classifying-stockout-risk` | `.claude/skills/classifying-stockout-risk/SKILL.md` (même réserve) | Build écrit le SKILL.md et le script de calcul, commit |
+| S1 — `alerte-rupture-hebdomadaire` | `outputs/alerte-rupture-hebdomadaire/skill/alerte-rupture-hebdomadaire/SKILL.md` | Build écrit le SKILL.md (`disable-model-invocation: true`), commit ; lancement en demandant à Claude de suivre ce fichier (ou par `/alerte-rupture-hebdomadaire` après copie dans `.claude/skills/`) |
+| S2 — `classifying-stockout-risk` | `outputs/alerte-rupture-hebdomadaire/skill/classifying-stockout-risk/SKILL.md` | Build écrit le SKILL.md et le script de calcul, commit |
 | `screening-sales-data` | Déjà installé (skills du compte) | Aucun ; vérifier sa présence au lancement |
 
 **Packaging note:** Les deux skills sont des dossiers placés directement dans le dépôt du projet. Pas de plugin ni de marketplace : le dépôt GitHub est le moyen de partage.
@@ -284,7 +284,6 @@ pauses G1/G2 et décision de l'utilisateur ; actions sur fichiers
 
 ## Deferred to Build
 
-- [ ] Emplacement final des skills (`.claude/skills/` ou `outputs/.../skill/`) selon l'accord de l'enseignante
 - [ ] Shareability (file vs code distribution mode) — partage via le dépôt GitHub par défaut
 - [ ] Exact model version per platform (mapping above is guidance; Build verifies current names)
 - [ ] Format exact des colonnes attendues par `screening-sales-data`, et réutilisation éventuelle de `calculating-stock-coverage` à la place de S2
@@ -344,7 +343,7 @@ Swimlane : Contrôle de gestion / e-commerce (1) → Responsable des achats (lan
 
 **Safety**
 - ✓ Safety & Permissions section is present — all four questions answered with mitigations
-- ⚠️ Constraint Conformance table lists every constraint in a recorded state — 2 constraints are `Open` (visibilité du dépôt, droits d'accès) ; signalés à l'étudiante, à résoudre avant approbation
+- ✓ Constraint Conformance table lists every constraint in a recorded state — 5 Satisfied, 1 Accepted (owner : Meriem, raison indiquée), 0 Open
 - ✓ Value & Measurement restates objective, outcome, measure, baseline and target ; `Baseline: Unknown` carried through
 - ✓ Requirements do not predate these sections — no Design-sourced constraints
 - ✓ Untrusted input AND write access — not applicable (no untrusted input, no external write)
