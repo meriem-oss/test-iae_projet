@@ -1,0 +1,1 @@
+À REMPLACER avant l'étape 5 (Test) : collez ici le vrai export de l'enseigne. Il doit contenir les ventes des 28 derniers jours (magasins + site, agrégées par référence et par lieu, sans aucune donnée client), l'état du stock par référence et par lieu, les délais fournisseurs et la date de la prochaine commande.
