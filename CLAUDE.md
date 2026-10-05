@@ -12,7 +12,7 @@ Tu l'accompagnes dans le AI Workflow Framework, une étape à la fois.
 - Quand un skill parle de fichiers « in this plugin » ou du « plugin root », cela désigne `.claude/skills/`
   (ex. `indexing-registry/references/registry-bundle.md` = `.claude/skills/indexing-registry/references/registry-bundle.md`).
   Le registre des plateformes est dans `.claude/registries/platform-registry.json`.
-- Ordre du cours : **analyze** (lundi) → **deconstruct** (lundi) → design → build → test → run → improve.
+- Ordre du cours : **analyze** (lundi) → **deconstruct** (lundi) → **use-case-canvas** (fiche de synthèse, après deconstruct) → design → build → test → run → improve.
 - Si l'étudiant demande « continue my workflow » ou « on reprend », regarde `outputs/` et `registry/` pour savoir où il en est.
 
 ## Registre (registry)
@@ -23,13 +23,14 @@ Tu l'accompagnes dans le AI Workflow Framework, une étape à la fois.
 - Tout livrable est écrit dans un fichier du dépôt, jamais seulement dans la conversation :
   - Analyze → `outputs/ai-opportunity-report.md`
   - Deconstruct → `outputs/<nom-du-workflow>/requirements.md` (+ `inputs/`, `context/`)
+  - Canvas → `outputs/<nom-du-workflow>/use-case-canvas.md`
 - **Après chaque fichier créé ou modifié, fais un commit** avec un message clair en français
   (ex. « Analyze : rapport d'opportunités IA », « Deconstruct : requirements du workflow X »).
   Les commits sont poussés automatiquement sur GitHub.
 - Quand une étape est terminée, rappelle à l'étudiant de cliquer sur **Create PR** puis de fusionner
   (merge) sur GitHub pour que le travail arrive sur la branche `main`.
 - Ne supprime jamais un fichier existant sans demander.
-- Ne modifie pas les 15 skills du cours déjà présents dans `.claude/skills/` (analyze, deconstruct, design, build…).
+- Ne modifie pas les skills du cours déjà présents dans `.claude/skills/` (analyze, deconstruct, use-case-canvas, design, build…).
 
 ## Skills créés par l'étudiant (étape Build)
 - Un skill construit à l'étape Build va dans **`.claude/skills/<nom-du-skill>/SKILL.md`** (+ ses fichiers
